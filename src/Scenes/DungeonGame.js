@@ -107,8 +107,8 @@ class Dungeon extends Phaser.Scene {
             config.width / 2,
             config.height / 2,
             "LEVEL " + this.levelNum,
-            { fontFamily: "Pixellari" })
-            .setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(1);
+            { fontFamily: "Pixellari" }
+        ).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(1);
         my.text.levelText.scale = 1;
         my.text.levelText.x = config.width / 3;
         my.text.levelText.y = 2.1 * config.height / 3;
@@ -118,8 +118,8 @@ class Dungeon extends Phaser.Scene {
             config.width / 2,
             config.height / 2,
             "LIVES: " + this.lives,
-            { fontFamily: "Pixellari" })
-            .setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(1);
+            { fontFamily: "Pixellari" }
+        ).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(1);
         my.text.livesText.scale = 1;
         my.text.livesText.x = 2 * config.width / 3;
         my.text.livesText.y = 2.1 * config.height / 3;
@@ -569,6 +569,7 @@ class Dungeon extends Phaser.Scene {
 
             // send player to end screen
             this.gameComplete = true;
+            this.gameOver = true;
             this.canMove = false;
 
         }
@@ -580,8 +581,9 @@ class Dungeon extends Phaser.Scene {
         //////////////////////////////////////
         if ((this.lives <= 0 || this.gameComplete) && this.gameOver) {
 
-            this.gameOver = false
-            setTimeout( () => this.scene.start("endScene", {escape: this.gameOver}), 500 );
+            this.gameOver = false;
+            this.cameras.main.fadeOut(1000);
+            setTimeout( () => this.scene.start("endScene", {escape: this.gameComplete}), 1000 );
 
         }
 
@@ -764,7 +766,7 @@ class Dungeon extends Phaser.Scene {
     updateStatic() {
 
         my.text.levelText.setText("LEVEL " + this.levelNum);
-        my.text.livesText.setText("LIVES: " + this.lives);
+        my.text.livesText.setText("LIVES: " + (this.lives > 0 ? this.lives : "0"));
 
     }
 

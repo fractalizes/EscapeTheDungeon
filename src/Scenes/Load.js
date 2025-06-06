@@ -34,7 +34,7 @@ class Load extends Phaser.Scene {
 
     create() {
 
-        // ... and pass to the next scene
+        // pass preloaded assets to the next scene
         this.scene.start("startScene");
 
     }
