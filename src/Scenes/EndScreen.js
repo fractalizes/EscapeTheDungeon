@@ -34,9 +34,9 @@ class EndScreen extends Phaser.Scene {
         my.text.credits = this.add.text(
             config.width / 2,
             config.height / 2,
-            "<< CREDITS >>\n\n==============================================\n\n<- LIBRARIES/PROGRAMS ->\n\nPHASER v3.87\nEASYSTAR v0.4.4\nPIXILART\n\n<- VISUAL ASSETS ->\n\nKENNEY'S TINY DUNGEON\nKENNEY'S PARTICLE PACK\nPIXELLARI FONT\n\n<- SOUND EFFECTS ->\n\nGEOMETRY DASH SECRET COIN\nPOKEMON GEN 4 SHINY SPOTTED\nMINECRAFT DOOR OPEN/CLOSE\nRE:ZERO RESPAWN\nROBLOX BLOXY COLA",
+            "<< CREDITS >>\n\n==============================================\n\n<- LIBRARIES/PROGRAMS ->\n\nPHASER V3.87\nEASYSTAR V0.4.4\nPIXILART\n\n<- VISUAL ASSETS ->\n\nKENNEY'S TINY DUNGEON\nKENNEY'S PARTICLE PACK\nPIXELLARI FONT\n\n<- SOUND EFFECTS ->\n\nGEOMETRY DASH SECRET COIN\nPOKEMON GEN 4 SHINY SPOTTED\nMINECRAFT DOOR OPEN/CLOSE\nMINECRAFT HURT\nRE:ZERO RESPAWN\nROBLOX BLOXY COLA\n\n==============================================",
             { fontFamily: "Pixellari" }
-        ).setAlign("center").setOrigin(0.5, 0.5).setScale(1).setScrollFactor(0).setDepth(1);
+        ).setAlign("center").setOrigin(0.5, 0.5).setScale(1.3).setScrollFactor(0).setDepth(1);
 
         my.text.restart = this.add.text(
             config.width / 2,

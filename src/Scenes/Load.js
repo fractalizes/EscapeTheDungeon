@@ -43,6 +43,9 @@ class Load extends Phaser.Scene {
 
     create() {
 
+        // create instructions
+        document.getElementById("description").innerHTML = "<h2>CONTROLS:</h2>[LMB] move to cursor<br><br>[W] move up<br>[A] move left<br>[S] move down<br>[D] move right";
+
         // pass preloaded assets to the next scene
         this.scene.start("startScene");
 
