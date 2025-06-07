@@ -40,8 +40,7 @@ class Dungeon extends Phaser.Scene {
         // create the layers
         this.groundLayer = this.map.createLayer("Ground", this.tileset, 0, 0);
         this.pathLayer = this.map.createLayer("InvisPath", this.tileset, 0, 0).setAlpha(0);
-        this.wallsLayer = this.map.createLayer("Walls", this.tileset, 0, 0);
-        this.decoLayer = this.map.createLayer("Decoration", this.tileset, 0, 0);
+        this.wallsLayer = this.map.createLayer("Walls", this.tileset, 0, 0).setAlpha(0.75);
         this.lockedLayer = this.map.createLayer("LockedDoors", this.tileset, 0, 0);
 
         // create sprites
@@ -78,7 +77,7 @@ class Dungeon extends Phaser.Scene {
         this.cameras.main.setZoom(this.SCALE);
 
         // create grid of visible tiles for use with path planning
-        let tinyDungeonGrid = this.layersToGrid([this.groundLayer, this.pathLayer, this.wallsLayer, this.decoLayer, ]);
+        let tinyDungeonGrid = this.layersToGrid([this.groundLayer, this.pathLayer, this.wallsLayer, this.lockedLayer ]);
 
         let walkables = [30, 36, 37, 38, 39, 48, 49, 50, 51, 52, 53, 62];
 
@@ -374,7 +373,7 @@ class Dungeon extends Phaser.Scene {
                 const path2 = new Phaser.Curves.Path(160, 224);
                 path2.lineTo(256, 224);
 
-                my.enemy.ghost1 = this.add.follower(path2, 160, 232, "ghost").setAlpha(0.9);
+                my.enemy.ghost1 = this.add.follower(path2, 160, 232, "ghost").setAlpha(0.75);
                 my.enemy.ghost1.startFollow({
 
                     from: 0,
@@ -504,7 +503,7 @@ class Dungeon extends Phaser.Scene {
             // move dark overlay if the room is dark
             if (this.isDark) {
 
-                this.darkOverlay.setAlpha(0.95);
+                this.darkOverlay.setAlpha(0.9);
                 this.darkOverlay.x = my.sprite.knight.x + 4;
                 this.darkOverlay.y = my.sprite.knight.y + 10;
 
