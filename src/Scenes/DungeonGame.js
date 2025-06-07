@@ -112,7 +112,8 @@ class Dungeon extends Phaser.Scene {
             "LEVEL " + this.levelNum,
             { fontFamily: "Pixellari" }
         ).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(1);
-        my.text.levelText.scale = 1;
+        my.text.levelText.setShadow(2, 2, "rgba(0, 0, 0, 0.9)", 1);           // thank you to this post for drop shadow:
+        my.text.levelText.scale = 1;                                            // https://samme.github.io/phaser-examples-mirror/text/text%20shadow.html
         my.text.levelText.x = config.width / 3;
         my.text.levelText.y = 2.1 * config.height / 3;
 
@@ -123,6 +124,7 @@ class Dungeon extends Phaser.Scene {
             "LIVES: " + this.lives,
             { fontFamily: "Pixellari" }
         ).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(1);
+        my.text.livesText.setShadow(2, 2, "rgba(0, 0, 0, 0.9)", 1);
         my.text.livesText.scale = 1;
         my.text.livesText.x = 2 * config.width / 3;
         my.text.livesText.y = 2.1 * config.height / 3;
@@ -753,8 +755,6 @@ class Dungeon extends Phaser.Scene {
     // uses the value of the cost property to inform EasyStar, using EasyStar's
     // setTileCost(tileID, tileCost) function.
     setCost(tileset) {
-
-        /*console.log("cost enabled!");*/
         
         for (let i = tileset.firstgid; i < tileset.total; i++) {
 
@@ -763,7 +763,6 @@ class Dungeon extends Phaser.Scene {
             // check if props exist on tileset
             if (props != null) {
 
-                /*console.log("cost set!");*/
                 this.finder.setTileCost(i, props.cost);
 
             }
