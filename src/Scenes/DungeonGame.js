@@ -20,7 +20,7 @@ class Dungeon extends Phaser.Scene {
         // create flags
         this.isMoving = false;
         this.canMove = true;
-        this.initLevel = true;
+        this.initLevel = false;
         this.isDark = false;
         this.gameOver = false;
         this.gameComplete = false;
@@ -63,6 +63,14 @@ class Dungeon extends Phaser.Scene {
         });
         my.vfx.click.stop();
 
+        // create audio
+        my.sfx.click = this.sound.add("click", { volume: 0.25 });
+        my.sfx.keyCollect = this.sound.add("keyCollect", { volume: 0.15 });
+        my.sfx.doorOpen = this.sound.add("doorOpen", { volume: 0.5 });
+        my.sfx.doorClose = this.sound.add("doorClose", { volume: 0.5 });
+        my.sfx.potionDrink = this.sound.add("potionDrink", { volume: 0.5 });
+        my.sfx.hurt = this.sound.add("hurt", { volume: 0.5 });
+
         // camera settings
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(my.sprite.knight, true, 1, 1);
@@ -84,7 +92,6 @@ class Dungeon extends Phaser.Scene {
 
         // tell EasyStar which tiles can be walked on
         this.finder.setAcceptableTiles(walkables);
-
         this.activeCharacter = my.sprite.knight;
 
         // handle mouse clicks
@@ -92,9 +99,6 @@ class Dungeon extends Phaser.Scene {
         // the this parameter passes the current "this" context to the
         // function this.handleClick()
         this.input.on("pointerup", this.handleClick, this);
-
-        this.lowCost = false;
-        my.keycode.c = this.input.keyboard.addKey("C");
 
         // define movement keybinds
         my.keycode.w = this.input.keyboard.addKey("W");
@@ -124,12 +128,6 @@ class Dungeon extends Phaser.Scene {
         my.text.livesText.x = 2 * config.width / 3;
         my.text.livesText.y = 2.1 * config.height / 3;
 
-        /*
-        const graphics = this.add.graphics();
-        graphics.lineStyle(2, 0xffffff, 1);
-        path.draw(graphics, 32);
-        */
-
         // set cost for easystar
         this.setCost(this.tileset);
 
@@ -148,11 +146,18 @@ class Dungeon extends Phaser.Scene {
         //////////////////////////////////////
         if (this.levelNum == 1) {
 
-            // collision check
+            // key check
             if (this.collides(my.sprite.knight, my.keyCollect.key1)) {
 
+                if (my.keyCollect.key1.visible) {
+
+                    my.sfx.keyCollect.play();
+                    my.sfx.doorOpen.play();
+
+                }
+
                 my.keyCollect.key1.visible = false;
-                this.lockedLayer.setAlpha(0);
+                this.lockedLayer.visible = false;
 
             }
 
@@ -218,11 +223,21 @@ class Dungeon extends Phaser.Scene {
             // key check
             for (let keyIndex in my.keyCollect) {
 
-                if (this.collides(my.sprite.knight, my.keyCollect[keyIndex])) { my.keyCollect[keyIndex].visible = false }
+                if (this.collides(my.sprite.knight, my.keyCollect[keyIndex])) {
+
+                    if (my.keyCollect[keyIndex].visible) { my.sfx.keyCollect.play() }
+                    my.keyCollect[keyIndex].visible = false
+
+                }
 
             }
 
-            if (this.keysCollected()) { this.lockedLayer.setAlpha(0) }
+            if (this.keysCollected()) {
+
+                if (this.lockedLayer.visible) { my.sfx.doorOpen.play() }
+                this.lockedLayer.visible = false;
+            
+            }
 
             // enemy collision check
             if (this.collides(my.sprite.knight, my.enemy.golem)) {
@@ -238,9 +253,10 @@ class Dungeon extends Phaser.Scene {
 
                 }
 
-                this.lockedLayer.setAlpha(1);
+                if (this.canMove) { my.sfx.hurt.play() }
                 this.cameras.main.fadeOut(0);
                 this.cameras.main.fadeIn(750);
+                this.lockedLayer.visible = true;
                 this.canMove = false;
                 setTimeout( () => this.canMove = true, 750 );
                 
@@ -415,17 +431,28 @@ class Dungeon extends Phaser.Scene {
             // key check
             for (let keyIndex in my.keyCollect) {
 
-                if (this.collides(my.sprite.knight, my.keyCollect[keyIndex])) { my.keyCollect[keyIndex].visible = false }
+                if (this.collides(my.sprite.knight, my.keyCollect[keyIndex])) {
+
+                    if (my.keyCollect[keyIndex].visible) { my.sfx.keyCollect.play() }
+                    my.keyCollect[keyIndex].visible = false
+
+                }
 
             }
 
-            if (this.keysCollected()) { this.lockedLayer.setAlpha(0) } 
+            if (this.keysCollected()) {
+
+                if (this.lockedLayer.visible) { my.sfx.doorOpen.play() }
+                this.lockedLayer.visible = false;
+            
+            }
             
             // potion check
             if (this.collides(my.sprite.knight, my.sprite.potion) && my.sprite.potion.visible) {
 
                 setTimeout( () => this.isDark = false, 250 );
 
+                if (my.sprite.potion.visible) { my.sfx.potionDrink.play() }
                 this.canMove = false;
                 this.cameras.main.fadeOut(250);
                 setTimeout( () => this.canMove = true, 250 );
@@ -451,9 +478,10 @@ class Dungeon extends Phaser.Scene {
 
                     }
 
-                    this.lockedLayer.setAlpha(1);
+                    if (this.canMove) { my.sfx.hurt.play() }
                     this.cameras.main.fadeOut(0);
                     this.cameras.main.fadeIn(750);
+                    this.lockedLayer.visible = true;
                     this.canMove = false;
                     setTimeout( () => this.canMove = true, 750 );
 
@@ -526,12 +554,15 @@ class Dungeon extends Phaser.Scene {
         if (this.levelNum == 1 && 
             (my.sprite.knight.x >= 195 && my.sprite.knight.x <= 216) && 
             (my.sprite.knight.y >= 1055 && my.sprite.knight.y <= 1056) && 
-            (!my.keyCollect.key1.visible)) {
+            (!my.keyCollect.key1.visible)
+        ) {
+
+            if (!this.initLevel) { my.sfx.doorClose.play() }
 
             this.cameras.main.fadeOut(750);
             setTimeout( () => my.sprite.knight.y = 816, 750 );
             setTimeout( () => this.cameras.main.fadeIn(750), 750 );
-            setTimeout( () => this.lockedLayer.setAlpha(1), 750 );
+            setTimeout( () => this.lockedLayer.visible = true, 750 );
             setTimeout( () => this.updateStatic(), 750 );
             
             // finally, update level count and flags
@@ -545,13 +576,16 @@ class Dungeon extends Phaser.Scene {
         if (this.levelNum == 2 &&
             (my.sprite.knight.x >= 200 && my.sprite.knight.x <= 216) &&
             (my.sprite.knight.y >= 687 && my.sprite.knight.y <= 688) && 
-            (this.keysCollected())) {
+            (this.keysCollected())
+        ) {
+
+            if (!this.initLevel) { my.sfx.doorClose.play() }
 
             this.cameras.main.fadeOut(750);
             setTimeout( () => my.sprite.knight.x = 200, 750 );
             setTimeout( () => my.sprite.knight.y = 80, 750 );
             setTimeout( () => this.cameras.main.fadeIn(750), 750 );
-            setTimeout( () => this.lockedLayer.setAlpha(1), 750 );
+            setTimeout( () => this.lockedLayer.visible = true, 750 );
             setTimeout( () => this.updateStatic(), 750 );
             
             // finally, update level count and flags
@@ -565,8 +599,11 @@ class Dungeon extends Phaser.Scene {
         if (this.levelNum == 3 &&
             (my.sprite.knight.x >= 184 && my.sprite.knight.x <= 216) &&
             (my.sprite.knight.y >= 64 && my.sprite.knight.y <= 65) && 
-            (this.keysCollected() && this.canMove)) {
+            (this.keysCollected() && this.canMove)
+        ) {
 
+            if (!this.initLevel) { my.sfx.doorClose.play() }
+            
             // send player to end screen
             this.gameComplete = true;
             this.gameOver = true;
@@ -589,20 +626,10 @@ class Dungeon extends Phaser.Scene {
 
     }
 
-    tileXtoWorld(tileX) {
+    tileXtoWorld(tileX) { return tileX * this.TILESIZE }
+    tileYtoWorld(tileY) { return tileY * this.TILESIZE }
 
-        return tileX * this.TILESIZE;
-
-    }
-
-    tileYtoWorld(tileY) {
-
-        return tileY * this.TILESIZE;
-        
-    }
-
-    // layersToGrid
-    //
+    // layersToGrid()
     // uses the tile layer information in this.map and outputs
     // an array which contains the tile ids of the visible tiles on screen.
     // this array can then be given to Easystar for use in path finding.
@@ -648,6 +675,8 @@ class Dungeon extends Phaser.Scene {
 
     handleClick(pointer) {
 
+        my.sfx.click.play();
+
         // shoutouts to this thread, saved me many minutes of headache:
         // https://phaser.discourse.group/t/using-camera-zoom-on-player-using-easystar-pathfinding-algorithm/9742
         let x = pointer.worldX;
@@ -658,7 +687,6 @@ class Dungeon extends Phaser.Scene {
         var toY = Math.floor(y / this.TILESIZE);
         var fromX = Math.floor(this.activeCharacter.x / this.TILESIZE);
         var fromY = Math.floor(this.activeCharacter.y / this.TILESIZE);
-        /*console.log("going from (" + fromX + "," + fromY + ") to (" + toX + "," + toY + ")");*/
 
         // place particle effect for clicking
         my.vfx.click.x = x + (Math.floor(Math.random() * -1) * Math.floor(Math.random() * 2));
@@ -763,6 +791,7 @@ class Dungeon extends Phaser.Scene {
 
     }
 
+    // function that updates static text elements
     updateStatic() {
 
         my.text.levelText.setText("LEVEL " + this.levelNum);

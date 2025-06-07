@@ -38,6 +38,7 @@ var my = {
     enemy: {}, 
     keyCollect: {}, 
     keycode: {}, 
+    sfx: {}, 
     vfx: {}, 
     text: {}
     

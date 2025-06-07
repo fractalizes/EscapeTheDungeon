@@ -23,6 +23,15 @@ class Load extends Phaser.Scene {
         // load fonts
         this.load.font("Pixellari", "Pixellari.ttf", "truetype");
 
+        // load audio
+        this.load.audio("click", "pokemonShiny.mp3");
+        this.load.audio("keyCollect", "gdCoin.mp3");
+        this.load.audio("doorOpen", "minecraftDoorOpen.mp3");
+        this.load.audio("doorClose", "minecraftDoorClose.mp3");
+        this.load.audio("potionDrink", "robloxCola.mp3");
+        this.load.audio("hurt", "minecraftHurt.mp3");
+        this.load.audio("restart", "rezeroRespawn.mp3");
+
         // the multiatlas was created using texturepacker and the kenney particle pack asset pack
         this.load.multiatlas("kenny-particles", "kenny-particles.json");
 
